@@ -1,10 +1,5 @@
 nextflow.enable.dsl = 2
 
-def requiredPath = { value, name ->
-  if (!value) error "Missing required parameter: --${name}"
-  file(value, checkIfExists: true)
-}
-
 process PREPARE_METADATA {
   tag "${donor}"
   input:
@@ -98,11 +93,16 @@ process GNOMAD_POPMAX_FILTER {
 }
 
 workflow {
-  requiredPath(params.manifest, 'manifest')
-  requiredPath(params.cell_metadata, 'cell_metadata')
-  requiredPath(params.reference_config, 'reference_config')
-  requiredPath(params.scomatic_env, 'scomatic_env')
-  requiredPath(params.scomatic_repo, 'scomatic_repo')
+  if (!params.manifest) error 'Missing required parameter: --manifest'
+  if (!params.cell_metadata) error 'Missing required parameter: --cell_metadata'
+  if (!params.reference_config) error 'Missing required parameter: --reference_config'
+  if (!params.scomatic_env) error 'Missing required parameter: --scomatic_env'
+  if (!params.scomatic_repo) error 'Missing required parameter: --scomatic_repo'
+  file(params.manifest, checkIfExists: true)
+  file(params.cell_metadata, checkIfExists: true)
+  file(params.reference_config, checkIfExists: true)
+  file(params.scomatic_env, checkIfExists: true)
+  file(params.scomatic_repo, checkIfExists: true)
   if (!params.run_root) error 'Missing required parameter: --run_root'
 
   libraries = Channel
