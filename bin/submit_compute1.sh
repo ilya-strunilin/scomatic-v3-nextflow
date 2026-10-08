@@ -9,7 +9,6 @@ while (($#)); do
 done
 [[ -s "$params" ]] || usage
 command -v bsub >/dev/null || { echo "bsub is required" >&2; exit 127; }
-command -v nextflow >/dev/null || { echo "nextflow is required on the controller host" >&2; exit 127; }
 
 base=$(cd "$(dirname "$0")/.." && pwd)
 mapfile -t submission_config < <(python3 - "$params" <<'PY'
@@ -22,19 +21,28 @@ with open(sys.argv[1]) as handle:
 print(params.get("run_root", ""))
 print(params.get("lsf_queue") or "general")
 print(params.get("lsf_group") or "")
+print(params.get("lsf_container") or "strunyadocker/mamba_minimal")
+print(params.get("controller_runtime") or "")
 PY
 )
 run_root=${submission_config[0]:-}
 params_queue=${submission_config[1]:-general}
 params_group=${submission_config[2]:-}
+params_container=${submission_config[3]:-strunyadocker/mamba_minimal}
+controller_runtime=${submission_config[4]:-}
 [[ -n "$run_root" ]] || { echo "run_root is required in params JSON" >&2; exit 2; }
+[[ -n "$controller_runtime" && -x "$controller_runtime/bin/nextflow" && -s "$controller_runtime/runtime.env" ]] || {
+  echo "controller_runtime must contain executable bin/nextflow and runtime.env" >&2
+  exit 2
+}
 mkdir -p "$run_root"/{logs,controller_work,submission}
 
 # Environment overrides are useful for a one-off site policy, while the JSON
 # keeps the normal submission reproducible and visible in the run inputs.
 queue=${LSF_QUEUE:-$params_queue}
 group=${LSF_GROUP:-$params_group}
-submission_args=(-J nf-scomatic-v3 -q "$queue")
+container=${LSF_CONTROLLER_CONTAINER:-$params_container}
+submission_args=(-J nf-scomatic-v3 -q "$queue" -a "docker(${container})")
 [[ -n "$group" ]] && submission_args+=(-G "$group")
 
 # If Compute1 Docker needs bind mounts, export LSF_DOCKER_VOLUMES before calling

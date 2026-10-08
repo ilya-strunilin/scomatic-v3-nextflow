@@ -4,6 +4,7 @@
   "reference_config": "/storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow/resources/configs/reference_config.tsv",
   "scomatic_env": "/scratch1/path/to/scomatic-environment",
   "scomatic_repo": "/storage3/path/to/SComatic",
+  "controller_runtime": "/scratch1/path/to/compute1-nextflow-runtime",
   "run_root": "/scratch1/fs1/martyomov/i.strunilin/codex/scomatic-v3-example-runs/GSE133028_6",
   "lsf_queue": "general",
   "lsf_group": null,

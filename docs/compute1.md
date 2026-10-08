@@ -14,12 +14,20 @@ Every task writes its LSF combined log to
 `nextflow_controller_<job-id>.log`. A real `run_root` is required specifically
 to avoid `null/logs/...` paths and associated mail notifications.
 
-The task container is configurable through `lsf_container`. The default is the
-image used by this workflow's Compute1 deployment; change it if your account
-uses a different approved image. Similarly, set `lsf_group` only if your LSF
-account requires a group, and export `LSF_DOCKER_VOLUMES` before submission if
+The task and controller containers are configurable through `lsf_container`.
+The default is the image used by this workflow's Compute1 deployment; change
+it if your account uses a different approved image. Similarly, set
+`lsf_group` only if your LSF account requires a group, and export
+`LSF_DOCKER_VOLUMES` before submission if
 the Compute1 Docker integration requires explicit bind mounts for your data,
 reference, scratch, and repository paths.
+
+The controller also requires a user-scoped `controller_runtime` containing
+Nextflow, Java, and a Compute1 LSF client. Create it with
+`bin/bootstrap_compute1_controller_runtime.sh` from a Compute1 login host, add
+its scratch path to `LSF_DOCKER_VOLUMES`, and record that exact path in the
+params JSON. The runtime is generated per user/site and intentionally excluded
+from the repository.
 
 The controller script sets `NXF_HOME` and `NXF_WORK` inside `run_root`, so
 Nextflow state, launch cache, and controller work do not accumulate in HOME.

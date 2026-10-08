@@ -84,6 +84,24 @@ https://github.com/cortes-ciriano-lab/SComatic. Keep the SComatic checkout,
 the installed environment, and the reference resource versions recorded in
 your run documentation.
 
+### Install the Compute1 controller runtime
+
+On Compute1, controllers run in Docker too. Create one project-scoped runtime
+with Nextflow, Java, and the site LSF client before submitting a workflow. This
+script copies the client from the local Compute1 installation; it does not put
+site client files in Git.
+
+```bash
+bash bin/bootstrap_compute1_controller_runtime.sh \
+  --runtime-root /scratch1/fs1/<group>/<user>/codex/scomatic-v3-controller-runtime
+```
+
+Use that directory as `controller_runtime` in the params JSON, and include it
+in `LSF_DOCKER_VOLUMES` along with the repository, inputs, references,
+SComatic environment, and run root. The bootstrap writes
+`COMPUTE1_CONTROLLER_RUNTIME_OK` only after validating Nextflow and the copied
+LSF client.
+
 ### SComatic version used for the published v3 defaults
 
 The v3 analyses were run against upstream SComatic commit
@@ -160,7 +178,8 @@ references or infer compatible resources.
 
 Start from `assets/compute1.params.example.json`. The required path fields are
 `manifest`, `cell_metadata`, `reference_config`, `scomatic_env`,
-`scomatic_repo`, and `run_root`. The first five must already exist; use a new,
+`scomatic_repo`, `controller_runtime`, and `run_root`. The first six must
+already exist; use a new,
 writable Scratch1 directory for `run_root` because it stores large intermediate
 BAMs, logs, markers, and Nextflow work. Keep the params JSON outside the Git
 checkout if it contains project-specific locations.
@@ -190,7 +209,9 @@ cp assets/compute1.params.example.json \
    checkout/environment, and selected Scratch1 `run_root` are visible inside
    every task container. The queue defaults to `general`; override `lsf_queue`
    or `lsf_group` only when your account requires it. The submission helper
-   applies these fields to both the controller and its child tasks.
+   applies these fields to both the controller and its child tasks; its
+   controller uses the same `lsf_container` Docker application that Compute1
+   requires for every batch job.
 5. Validate configuration without submitting scientific tasks:
 
 ```bash

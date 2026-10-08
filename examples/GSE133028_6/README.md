@@ -22,14 +22,17 @@ to this repository.
 2. Set `scomatic_env` to a validated SComatic Python environment and
    `scomatic_repo` to the corresponding SComatic checkout. Both paths must be
    readable from LSF Docker tasks.
-3. Choose a new, writable scratch `run_root`. Do not point at a previous
+3. Set `controller_runtime` to a runtime made with
+   `bin/bootstrap_compute1_controller_runtime.sh`. It must be readable from
+   the controller Docker task.
+4. Choose a new, writable scratch `run_root`. Do not point at a previous
    production GSE133028_6 run.
-4. Confirm that both `<bam>.bai` files exist and that the `GRCh38_2020_A` row
+5. Confirm that both `<bam>.bai` files exist and that the `GRCh38_2020_A` row
    is present in the referenced `reference_config.tsv`.
-5. Export account-appropriate Docker mounts if required by Compute1. For this
+6. Export account-appropriate Docker mounts if required by Compute1. For this
    setup, the repository, the `/storage3` inputs/resources, the selected
-   `/scratch1` run root, and the SComatic environment must be visible inside
-   the task container.
+   `/scratch1` run root, the SComatic environment, and the controller runtime
+   must be visible inside the task container.
 
 ## Run
 
