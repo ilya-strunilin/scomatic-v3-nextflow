@@ -189,7 +189,8 @@ cp assets/compute1.params.example.json \
    `LSF_DOCKER_VOLUMES` so the repository, inputs, reference paths, SComatic
    checkout/environment, and selected Scratch1 `run_root` are visible inside
    every task container. The queue defaults to `general`; override `lsf_queue`
-   or `lsf_group` only when your account requires it.
+   or `lsf_group` only when your account requires it. The submission helper
+   applies these fields to both the controller and its child tasks.
 5. Validate configuration without submitting scientific tasks:
 
 ```bash
