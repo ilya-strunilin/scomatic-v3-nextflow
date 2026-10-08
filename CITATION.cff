@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this workflow, please cite it as described below."
+title: "SComatic v3 Nextflow"
+version: "0.1.0"
+date-released: 2026-10-08
+authors:
+  - family-names: "Strunilin"
+    given-names: "Ilya"
+license: "MIT"
+repository-code: "https://github.com/ilya-strunilin/scomatic-v3-nextflow"
+abstract: "A paired CSF/PBMC SComatic Nextflow workflow for Compute1 with tissue-aware joint BAMs and gnomAD v4.1.1 common-variant filtering."

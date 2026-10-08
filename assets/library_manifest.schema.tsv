@@ -1,0 +1,2 @@
+donor_id	donor_safe	reference_key	tissue	source_id	meta_prefix	bam
+DONOR_SOURCE_ID	DONOR_SAFE_NAME	REFERENCE_KEY	CSF_OR_PBMC	LIBRARY_ID	BARCODE_PREFIX	ABSOLUTE_INDEXED_BAM_PATH

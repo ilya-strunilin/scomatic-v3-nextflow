@@ -1,0 +1,14 @@
+{
+  "manifest": "/storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow/examples/GSE133028_6/library_manifest.tsv",
+  "cell_metadata": "/storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow/resources/metadata/cell_meta_grouped_csf_SComatic_prepare_anno2_clin_0.5.tsv.gz",
+  "reference_config": "/storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow/resources/configs/reference_config.tsv",
+  "scomatic_env": "/scratch1/path/to/scomatic-environment",
+  "scomatic_repo": "/storage3/path/to/SComatic",
+  "run_root": "/scratch1/fs1/martyomov/i.strunilin/codex/scomatic-v3-example-runs/GSE133028_6",
+  "lsf_queue": "general",
+  "lsf_group": null,
+  "lsf_container": "strunyadocker/mamba_minimal",
+  "max_cell_types": 15,
+  "min_base_quality": 30,
+  "gnomad_af_cutoff": 0.001
+}

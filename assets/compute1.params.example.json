@@ -1,0 +1,14 @@
+{
+  "manifest": "/storage3/path/to/resources/library_manifest.tsv",
+  "cell_metadata": "/storage3/path/to/resources/cell_metadata.tsv.gz",
+  "reference_config": "/storage3/path/to/resources/reference_config.tsv",
+  "scomatic_env": "/scratch1/path/to/scomatic-environment",
+  "scomatic_repo": "/storage3/path/to/SComatic",
+  "run_root": "/scratch1/path/to/runs/my_v3_run",
+  "lsf_queue": "general",
+  "lsf_group": null,
+  "lsf_container": "strunyadocker/mamba_minimal",
+  "max_cell_types": 15,
+  "min_base_quality": 30,
+  "gnomad_af_cutoff": 0.001
+}

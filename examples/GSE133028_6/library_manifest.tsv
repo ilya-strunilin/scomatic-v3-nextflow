@@ -1,0 +1,3 @@
+donor_id	donor_safe	reference_key	tissue	source_id	meta_prefix	bam
+GSE133028:6	GSE133028_6	GRCh38_2020_A	CSF	GSM5264639	GSM5264639	/storage3/fs1/gfwu/Active/public_datasets/GSE133028/full_output/GSM5264639/outs/possorted_genome_bam.bam
+GSE133028:6	GSE133028_6	GRCh38_2020_A	PBMC	GSM5264640	GSM5264640	/storage3/fs1/gfwu/Active/public_datasets/GSE133028/full_output/GSM5264640/outs/possorted_genome_bam.bam
