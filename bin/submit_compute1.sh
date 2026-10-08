@@ -23,6 +23,7 @@ print(params.get("lsf_queue") or "general")
 print(params.get("lsf_group") or "")
 print(params.get("lsf_container") or "strunyadocker/mamba_minimal")
 print(params.get("controller_runtime") or "")
+print(params.get("lsf_docker_volumes") or "")
 PY
 )
 run_root=${submission_config[0]:-}
@@ -30,6 +31,7 @@ params_queue=${submission_config[1]:-general}
 params_group=${submission_config[2]:-}
 params_container=${submission_config[3]:-strunyadocker/mamba_minimal}
 controller_runtime=${submission_config[4]:-}
+params_docker_volumes=${submission_config[5]:-}
 [[ -n "$run_root" ]] || { echo "run_root is required in params JSON" >&2; exit 2; }
 [[ -n "$controller_runtime" && -x "$controller_runtime/bin/nextflow" && -s "$controller_runtime/runtime.env" ]] || {
   echo "controller_runtime must contain executable bin/nextflow and runtime.env" >&2
@@ -42,6 +44,10 @@ mkdir -p "$run_root"/{logs,controller_work,submission}
 queue=${LSF_QUEUE:-$params_queue}
 group=${LSF_GROUP:-$params_group}
 container=${LSF_CONTROLLER_CONTAINER:-$params_container}
+docker_volumes=${LSF_DOCKER_VOLUMES:-$params_docker_volumes}
+[[ -n "$docker_volumes" ]] || { echo "lsf_docker_volumes or LSF_DOCKER_VOLUMES is required" >&2; exit 2; }
+export LSF_DOCKER_VOLUMES="$docker_volumes"
+export LSF_DOCKER_PRESERVE_ENVIRONMENT=false
 submission_args=(-J nf-scomatic-v3 -q "$queue" -a "docker(${container})")
 [[ -n "$group" ]] && submission_args+=(-G "$group")
 

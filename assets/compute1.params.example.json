@@ -9,6 +9,7 @@
   "lsf_queue": "general",
   "lsf_group": null,
   "lsf_container": "strunyadocker/mamba_minimal",
+  "lsf_docker_volumes": "/scratch1/path:/scratch1/path /storage3/path:/storage3/path",
   "max_cell_types": 15,
   "min_base_quality": 30,
   "gnomad_af_cutoff": 0.001

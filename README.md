@@ -204,10 +204,11 @@ cp assets/compute1.params.example.json \
   /storage3/path/to/params/my_v3_run.json
 ```
 
-4. If your Compute1 Docker integration requires explicit mounts, export
-   `LSF_DOCKER_VOLUMES` so the repository, inputs, reference paths, SComatic
+4. Set `lsf_docker_volumes` to Docker bind mounts for the repository, inputs,
+   reference paths, SComatic
    checkout/environment, and selected Scratch1 `run_root` are visible inside
-   every task container. The queue defaults to `general`; override `lsf_queue`
+   every task container. `LSF_DOCKER_VOLUMES` can override this field for a
+   one-off submission. The queue defaults to `general`; override `lsf_queue`
    or `lsf_group` only when your account requires it. The submission helper
    applies these fields to both the controller and its child tasks; its
    controller uses the same `lsf_container` Docker application that Compute1
