@@ -63,14 +63,14 @@ case "$mode" in
     csf=$(awk -F '\t' 'NR > 1 && $4 == "CSF" {n++} END {print n+0}' "$root/input/libraries.tsv")
     pbmc=$(awk -F '\t' 'NR > 1 && $4 == "PBMC" {n++} END {print n+0}' "$root/input/libraries.tsv")
     [[ "$csf" -eq 1 && "$pbmc" -eq 1 ]] || die "each donor needs one CSF and one PBMC manifest row"
-    while IFS=$'\t' read -r library_donor_id library_donor tissue source_id meta_prefix bam library_ref; do
+    while IFS=$'\t' read -r library_donor_id library_donor library_ref tissue source_id meta_prefix bam; do
       [[ "$library_donor" == "$donor" && "$library_donor_id" == "$donor_id" && "$library_ref" == "$ref_key" ]] || die "inconsistent donor manifest"
       make_metadata "$meta" "$source_id" "$meta_prefix" "$tissue" "$root/input/$source_id.pre.tsv"
       [[ $(wc -l < "$root/input/$source_id.pre.tsv") -gt 1 ]] || die "no usable metadata cells for $source_id"
       awk -F '\t' 'NR > 1 && $1 !~ /_/ { print $1 }' "$root/input/$source_id.pre.tsv" | sort -u > "$root/input/$source_id.barcodes.txt"
     done < <(tail -n +2 "$root/input/libraries.tsv")
     cat "$root"/input/*.barcodes.txt | sort | uniq -d > "$root/input/overlapping_plain_barcodes_removed.txt"
-    while IFS=$'\t' read -r _ library_donor tissue source_id meta_prefix bam library_ref; do
+    while IFS=$'\t' read -r _ library_donor _ tissue source_id _ _; do
       awk -F '\t' -v badfile="$root/input/overlapping_plain_barcodes_removed.txt" '
         BEGIN { OFS="\t"; while ((getline barcode < badfile) > 0) bad[barcode] = 1 }
         NR == 1 { print; next }
@@ -105,7 +105,7 @@ case "$mode" in
     printf 'Cell_type\tsource_id\ttissue\tjoint_BAM\n' > "$root/input/joint_celltype_sources.tsv"
     for type in "${TYPES[@]}"; do
       inputs=()
-      while IFS=$'\t' read -r _ _ tissue source_id _ _ _; do
+      while IFS=$'\t' read -r _ _ _ tissue source_id _ _; do
         case "$type" in CSF_*) [[ "$tissue" == CSF ]] || continue ;; PBMC_*) [[ "$tissue" == PBMC ]] || continue ;; esac
         candidate="$root/results/Step1_BamCellTypes/$source_id/$source_id.$type.bam"
         if [[ -s "$candidate" ]]; then inputs+=("$candidate"); printf '%s\t%s\t%s\t%s\n' "$type" "$source_id" "$tissue" "$out/$type.bam" >> "$root/input/joint_celltype_sources.tsv"; fi
