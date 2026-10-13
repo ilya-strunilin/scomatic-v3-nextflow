@@ -140,8 +140,8 @@ case "$mode" in
     donor=$1; root="$RUNROOT/$donor"; runtime "$root" step4; check_environment; load_reference_config "$root"
     step3="$root/results/Step3_BaseCellCountsMerged/$donor.BaseCellCounts.AllCellTypes.tsv"; out="$root/results/Step4_VariantCalling_maxCellTypes${MAX_CELL_TYPES:-15}"
     if [[ -f "$root/markers/postprocess.ok" ]] && find "$out" -maxdepth 1 -name '*.calling.step2.pass.ref_support.annotated.tsv' -size +0c -print -quit | grep -q .; then echo "RECOVERY_REUSE_STEP4 $donor"; touch "$donor.step4.ok"; exit 0; fi
-    "$SCRIPT_DIR/run_scomatic_step4_from_step3.sh" --step3-file "$step3" --output-dir "$out" --tag "${donor}_maxCellTypes${MAX_CELL_TYPES:-15}" --repo "$REPO" --env-prefix "$ENV" --reference "$REF" --bed "$BED" --editing "$EDITING" --pon "$PON" --max-cell-types "${MAX_CELL_TYPES:-15}"
-    "$SCRIPT_DIR/postprocess_step4.sh" "$root" "$out" "$root/markers/postprocess.ok" "$GTF" "$BED" "$ENV"
+    bash "$SCRIPT_DIR/run_scomatic_step4_from_step3.sh" --step3-file "$step3" --output-dir "$out" --tag "${donor}_maxCellTypes${MAX_CELL_TYPES:-15}" --repo "$REPO" --env-prefix "$ENV" --reference "$REF" --bed "$BED" --editing "$EDITING" --pon "$PON" --max-cell-types "${MAX_CELL_TYPES:-15}"
+    bash "$SCRIPT_DIR/postprocess_step4.sh" "$root" "$out" "$root/markers/postprocess.ok" "$GTF" "$BED" "$ENV"
     touch "$donor.step4.ok"
     ;;
 
@@ -153,7 +153,7 @@ case "$mode" in
       table=$(find "$RUNROOT/$donor/results" -type f -name '*.calling.step2.pass.ref_support.annotated.tsv' -print -quit)
       [[ -s "$table" ]] || die "missing annotated PASS table for $donor"; inputs+=("$donor=$table")
     done < <(tail -n +2 "$manifest")
-    "$SCRIPT_DIR/gnomad_remote_vcf_filter.sh" --cutoff "${GNOMAD_AF_CUTOFF:-0.001}" "$RUNROOT/gnomad_v4_${GNOMAD_RELEASE:-4.1.1}_remote_vcf_popmax" "${inputs[@]}"
+    bash "$SCRIPT_DIR/gnomad_remote_vcf_filter.sh" --cutoff "${GNOMAD_AF_CUTOFF:-0.001}" "$RUNROOT/gnomad_v4_${GNOMAD_RELEASE:-4.1.1}_remote_vcf_popmax" "${inputs[@]}"
     ;;
 
   *) die "unknown mode: $mode" ;;

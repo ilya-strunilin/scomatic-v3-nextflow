@@ -9,7 +9,7 @@ process PREPARE_METADATA {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' \\
-  run_v3_task.sh prepare '${donor}' '${donor_id}' '${reference_key}' '${params.manifest}' '${params.cell_metadata}' '${params.reference_config}'
+  bash "\$(command -v run_v3_task.sh)" prepare '${donor}' '${donor_id}' '${reference_key}' '${params.manifest}' '${params.cell_metadata}' '${params.reference_config}'
   """
 }
 
@@ -22,7 +22,7 @@ process STEP1_SPLIT {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' \\
-  run_v3_task.sh step1 '${donor}' '${tissue}' '${source_id}' '${bam}'
+  bash "\$(command -v run_v3_task.sh)" step1 '${donor}' '${tissue}' '${source_id}' '${bam}'
   """
 }
 
@@ -35,7 +35,7 @@ process BUILD_JOINT_BAMS {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' CELL_TYPES='${params.cell_types}' \\
-  run_v3_task.sh joint '${donor}'
+  bash "\$(command -v run_v3_task.sh)" joint '${donor}'
   """
 }
 
@@ -48,7 +48,7 @@ process STEP2_COUNTER {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' NPROCS='${task.cpus}' MIN_BASE_QUALITY='${params.min_base_quality}' \\
-  run_v3_task.sh step2 '${donor}' '${cell_type}'
+  bash "\$(command -v run_v3_task.sh)" step2 '${donor}' '${cell_type}'
   """
 }
 
@@ -61,7 +61,7 @@ process MERGE_STEP3 {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' \\
-  run_v3_task.sh merge '${donor}'
+  bash "\$(command -v run_v3_task.sh)" merge '${donor}'
   """
 }
 
@@ -74,7 +74,7 @@ process STEP4_MAX15_POSTPROCESS {
   script:
   """
   RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' SCOMATIC_REPO='${params.scomatic_repo}' MAX_CELL_TYPES='${params.max_cell_types}' \\
-  run_v3_task.sh step4 '${donor}'
+  bash "\$(command -v run_v3_task.sh)" step4 '${donor}'
   """
 }
 
@@ -87,7 +87,7 @@ process GNOMAD_POPMAX_FILTER {
   script:
   """
   RUNROOT='${params.run_root}' GNOMAD_AF_CUTOFF='${params.gnomad_af_cutoff}' GNOMAD_RELEASE='${params.gnomad_release}' \\
-  run_v3_task.sh gnomad_popmax '${params.manifest}'
+  bash "\$(command -v run_v3_task.sh)" gnomad_popmax '${params.manifest}'
   touch gnomad_popmax.ok
   """
 }

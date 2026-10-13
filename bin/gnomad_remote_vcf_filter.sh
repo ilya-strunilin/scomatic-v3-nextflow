@@ -121,5 +121,5 @@ with open(summary_path, 'w', newline='') as summary:
         sw.writerow([donor, input_n, retained_n, counts['FILTER_POPMAX_AF_GE_'+cutoff_text], counts['FILTER_GENERIC_AF_GE_'+cutoff_text], counts['RETAIN_POPMAX_AF_LT_'+cutoff_text], counts['RETAIN_GENERIC_AF_LT_'+cutoff_text], counts['RETAIN_NOT_IN_GNOMAD'] + counts['RETAIN_GNOMAD_NO_AF_OR_GRPMAX']])
 PY
 
-"$(dirname "$0")/normalize_tsv_missing_values.sh" "$out_dir"/results/*.gnomad_popmax.tsv "$out_dir"/results/*.gnomad_filtered.tsv
+bash "$(dirname "$0")/normalize_tsv_missing_values.sh" "$out_dir"/results/*.gnomad_popmax.tsv "$out_dir"/results/*.gnomad_filtered.tsv
 touch "$out_dir/GNOMAD_V4_1_1_REMOTE_VCF_POPMAX_GENERIC_FALLBACK_FULL_INFO_OK"
