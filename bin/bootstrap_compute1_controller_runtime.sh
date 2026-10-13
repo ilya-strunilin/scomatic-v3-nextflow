@@ -42,6 +42,12 @@ done
 mkdir -p "$runtime_root"/{envs,mamba_root,mamba_pkgs,nxf_home,bin,home,xdg_cache}
 mkdir -p "$lsf_client"
 for directory in bin conf etc lib; do cp -a "$lsf_root/$directory" "$lsf_client/$directory"; done
+for lsf_command in bsub bjobs bkill; do
+  [[ -x "$lsf_client/bin/$lsf_command" ]] || {
+    echo "Bootstrap copied an incomplete LSF client; missing: $lsf_client/bin/$lsf_command" >&2
+    exit 3
+  }
+done
 
 export MAMBA_ROOT_PREFIX="$mamba_root"
 export MAMBA_PKGS_DIRS="$mamba_pkgs"
@@ -72,12 +78,14 @@ export NXF_VER="$nextflow_version"
 EOF
 
 "$bin_dir/nextflow" -version
-LSF_BINDIR="$lsf_client/bin" \
-LSF_ENVDIR="$lsf_client/conf" \
-LSF_LIBDIR="$lsf_client/lib" \
-LSF_SERVERDIR="$lsf_client/etc" \
-PATH="$lsf_client/bin:$PATH" \
-"$lsf_client/bin/bsub" -V
+for lsf_command in bsub bjobs bkill; do
+  LSF_BINDIR="$lsf_client/bin" \
+  LSF_ENVDIR="$lsf_client/conf" \
+  LSF_LIBDIR="$lsf_client/lib" \
+  LSF_SERVERDIR="$lsf_client/etc" \
+  PATH="$lsf_client/bin:$PATH" \
+  "$lsf_client/bin/$lsf_command" -V
+done
 
 touch "$runtime_root"
 find "$env_prefix" "$mamba_pkgs" "$nxf_home" "$bin_dir" -exec touch -h {} +
