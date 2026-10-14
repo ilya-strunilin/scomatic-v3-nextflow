@@ -148,7 +148,7 @@ case "$mode" in
   gnomad_popmax)
     manifest=$1; [[ -s "$manifest" ]] || die "missing library manifest"
     runtime "$RUNROOT" gnomad_popmax
-    [[ -x "$ENV/bin/python" && -x "$ENV/bin/bcftools" ]] || die "gnomAD annotation requires python and bcftools under SCOMATIC_ENV"
+    [[ -x "$ENV/bin/python" ]] || die "gnomAD annotation requires Python under SCOMATIC_ENV"
     inputs=(); declare -A seen=()
     while IFS=$'\t' read -r _ donor _ _ _ _ _; do
       [[ ${seen[$donor]:-} ]] && continue; seen[$donor]=1

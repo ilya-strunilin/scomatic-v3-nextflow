@@ -8,6 +8,9 @@ if [[ ${1:-} == --cutoff ]]; then cutoff=${2:?cutoff required}; shift 2; fi
 out_dir=${1:?output directory required}; shift
 (( $# > 0 )) || { echo "at least one DONOR=TABLE input is required" >&2; exit 2; }
 command -v bcftools >/dev/null || { echo "bcftools is required" >&2; exit 127; }
+python_bin=${SCOMATIC_ENV:+$SCOMATIC_ENV/bin/python}
+[[ -x ${python_bin:-} ]] || python_bin=$(command -v python3 || true)
+[[ -n ${python_bin:-} && -x "$python_bin" ]] || { echo "Python is required (set SCOMATIC_ENV or provide python3)" >&2; exit 127; }
 [[ "$cutoff" =~ ^0\.[0-9]+$ ]] || { echo "cutoff must be a decimal fraction" >&2; exit 2; }
 
 mkdir -p "$out_dir"/{regions,raw,results}
@@ -32,7 +35,7 @@ while IFS=$'\t' read -r chrom _ _; do echo "$chrom"; done < "$queryable" | sort 
   done
 done
 
-python3 - "$candidates" "$out_dir" "$cutoff" "$@" <<'PY'
+"$python_bin" - "$candidates" "$out_dir" "$cutoff" "$@" <<'PY'
 import csv, glob, os, sys
 from collections import defaultdict
 
