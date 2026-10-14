@@ -47,14 +47,14 @@ Edit the copied JSON as described above, then submit the controller from the
 repository root:
 
 ```bash
-bin/submit_compute1.sh \
+bash bin/submit_compute1.sh \
   --params /storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow-config/GSE133028_6.params.json
 ```
 
 For an interrupted run with unchanged paths and parameters, use:
 
 ```bash
-bin/submit_compute1.sh \
+bash bin/submit_compute1.sh \
   --params /storage3/fs1/gfwu/Active/i.strunilin/Projects/CSF/Analysis/codex/testing/scomatic-v3-nextflow-config/GSE133028_6.params.json \
   --resume
 ```

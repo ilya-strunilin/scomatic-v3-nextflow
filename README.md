@@ -224,7 +224,7 @@ nextflow run main.nf -profile compute1 \
 6. Submit the small Nextflow controller, which in turn submits LSF tasks:
 
 ```bash
-bin/submit_compute1.sh --params /storage3/path/to/params/my_v3_run.json
+bash bin/submit_compute1.sh --params /storage3/path/to/params/my_v3_run.json
 ```
 
 7. Monitor the controller log in `<run_root>/logs/` and LSF child jobs. A task
@@ -235,7 +235,7 @@ bin/submit_compute1.sh --params /storage3/path/to/params/my_v3_run.json
 For an interrupted run with unchanged inputs, parameters, and `run_root`, use:
 
 ```bash
-bin/submit_compute1.sh --params /storage3/path/to/params/my_v3_run.json --resume
+bash bin/submit_compute1.sh --params /storage3/path/to/params/my_v3_run.json --resume
 ```
 
 Do not use `--resume` after changing the manifest, metadata, reference
