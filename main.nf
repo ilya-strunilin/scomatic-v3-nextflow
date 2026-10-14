@@ -86,7 +86,7 @@ process GNOMAD_POPMAX_FILTER {
   path('gnomad_popmax.ok')
   script:
   """
-  RUNROOT='${params.run_root}' GNOMAD_AF_CUTOFF='${params.gnomad_af_cutoff}' GNOMAD_RELEASE='${params.gnomad_release}' \\
+  RUNROOT='${params.run_root}' SCOMATIC_ENV='${params.scomatic_env}' GNOMAD_AF_CUTOFF='${params.gnomad_af_cutoff}' GNOMAD_RELEASE='${params.gnomad_release}' \\
   bash "\$(command -v run_v3_task.sh)" gnomad_popmax '${params.manifest}'
   touch gnomad_popmax.ok
   """
