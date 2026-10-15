@@ -251,6 +251,96 @@ references the durable `storage3` metadata and reference configuration. No BAM,
 metadata, or result data is included in this repository. See the
 `examples/GSE133028_6/README.md` run guide before launching it.
 
+## SComatic command equivalents and selected parameters
+
+This workflow calls the upstream SComatic Python scripts directly instead of
+using an opaque wrapper. The commands below show the effective command line
+for each stage when the published defaults are used. Variables such as
+`$DONOR`, `$SOURCE_ID`, and `$CELL_TYPE` are resolved independently for each
+donor, source library, or tissue-aware cell type by Nextflow.
+
+### Step 1: split each source BAM by cell type
+
+The workflow runs Step 1 once for the CSF source BAM and once for the PBMC
+source BAM. It provides the per-library metadata produced by `PREPARE_METADATA`;
+that metadata excludes only the exact `other` label.
+
+```bash
+"$SCOMATIC_ENV/bin/python" \
+  "$SCOMATIC_REPO/scripts/SplitBam/SplitBamCellTypes.py" \
+  --bam "$BAM" \
+  --meta "$RUN_ROOT/$DONOR/input/$SOURCE_ID.cell_types.tsv" \
+  --id "$SOURCE_ID" \
+  --n_trim 5 \
+  --max_nM 5 \
+  --max_NH 1 \
+  --outdir "$RUN_ROOT/$DONOR/results/Step1_BamCellTypes/$SOURCE_ID"
+```
+
+After Step 1, the workflow joins compatible CSF/PBMC per-cell-type BAMs with
+`samtools merge` (or copies the single source BAM when only one source has
+that cell type), then indexes the joint BAMs. This joint-BAM preparation is
+workflow logic, not an upstream SComatic Python step.
+
+### Step 2: count bases and cells in each joint cell-type BAM
+
+The following runs once per joint BAM. The published `compute1` profile sets
+`task.cpus = 10`, so the default `--nprocs` value is 10.
+
+```bash
+"$SCOMATIC_ENV/bin/python" \
+  "$SCOMATIC_REPO/scripts/BaseCellCounter/BaseCellCounter.py" \
+  --bam "$RUN_ROOT/$DONOR/results/Step1JointBams/$CELL_TYPE.bam" \
+  --ref "$REF" \
+  --chrom all \
+  --out_folder "$RUN_ROOT/$DONOR/results/Step2_BaseCellCounts" \
+  --min_bq 30 \
+  --tmp_dir "$TMPDIR" \
+  --nprocs 10
+```
+
+### Step 3: merge per-cell-type base/cell counts
+
+One merged table is made per donor after all configured Step 2 cell types
+finish:
+
+```bash
+"$SCOMATIC_ENV/bin/python" \
+  "$SCOMATIC_REPO/scripts/MergeCounts/MergeBaseCellCounts.py" \
+  --tsv_folder "$RUN_ROOT/$DONOR/results/Step2_BaseCellCounts" \
+  --outfile "$RUN_ROOT/$DONOR/results/Step3_BaseCellCountsMerged/$DONOR.BaseCellCounts.AllCellTypes.tsv"
+```
+
+### Step 4.1: call candidate variants
+
+The published default retains candidates supported across at most 15 cell
+types:
+
+```bash
+"$SCOMATIC_ENV/bin/python" \
+  "$SCOMATIC_REPO/scripts/BaseCellCalling/BaseCellCalling.step1.py" \
+  --infile "$RUN_ROOT/$DONOR/results/Step3_BaseCellCountsMerged/$DONOR.BaseCellCounts.AllCellTypes.tsv" \
+  --outfile "$RUN_ROOT/$DONOR/results/Step4_VariantCalling_maxCellTypes15/${DONOR}_maxCellTypes15" \
+  --ref "$REF" \
+  --max_cell_types 15
+```
+
+### Step 4.2: apply RNA-editing and panel-of-normals filters
+
+```bash
+"$SCOMATIC_ENV/bin/python" \
+  "$SCOMATIC_REPO/scripts/BaseCellCalling/BaseCellCalling.step2.py" \
+  --infile "$RUN_ROOT/$DONOR/results/Step4_VariantCalling_maxCellTypes15/${DONOR}_maxCellTypes15.calling.step1.tsv" \
+  --outfile "$RUN_ROOT/$DONOR/results/Step4_VariantCalling_maxCellTypes15/${DONOR}_maxCellTypes15" \
+  --editing "$RNA_EDITING" \
+  --pon "$PON"
+```
+
+The workflow then keeps only `FILTER=PASS` records overlapping the configured
+high-quality BED, adds nearest-gene and cell-type reference-support summaries,
+and performs the terminal gnomAD v4.1.1 annotation/filter. Those operations
+are pipeline additions and are described in the next two sections.
+
 ## Outputs
 
 Each donor is written under `<run_root>/<donor_safe>/results/`. The terminal
