@@ -22,6 +22,12 @@ The published defaults reproduce the v3 configuration used here:
 Project-specific clinical tables, metadata, manifests, BAMs, run outputs,
 credentials, and LSF client files are deliberately not in this repository.
 
+## Plots and analysis
+
+`Plots_and_analysis/README.md` describes the standalone R plotting script,
+its Storage3 inputs, how to run it, and where the current generated plots
+are stored.
+
 ## Install SComatic and gnomAD query dependencies
 
 Install the SComatic checkout in durable storage and its environment in a
